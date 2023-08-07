@@ -1,0 +1,34 @@
+////////////////==========When insert data -> Create Trigger and Insert into another table==============//////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+CREATE TRIGGER InsertCustomerHistory ON [dbo].[customers]
+FOR INSERT
+AS
+declare @name varchar(100);
+declare @dob date;
+declare @district_id int;
+
+select @name=i.name from inserted i;
+select @dob=i.dob from inserted i;
+select @district_id=i.district_id from inserted i;
+
+insert into customer_history
+(name,dob,district_id)
+values(@name,@dob,@district_id);
+
+////////////////==========When update data->Create Trigger==============//////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+CREATE TRIGGER insertWhenUpdateCustomer
+ON customers
+AFTER UPDATE
+AS
+BEGIN
+    -- Check if the important columns have been updated
+    IF UPDATE(name) OR UPDATE(dob) -- Add more columns if needed
+    BEGIN
+        INSERT INTO customer_history (name, dob)
+        SELECT
+            name, -- Map columns from Table1 to Table2 as needed
+            dob
+        FROM INSERTED;
+    END
+END;
