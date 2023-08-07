@@ -1,5 +1,6 @@
 ////////////////==========When insert data -> Create Trigger and Insert into another table==============//////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Example 1:
 CREATE TRIGGER InsertCustomerHistory ON [dbo].[customers]
 FOR INSERT
 AS
@@ -15,6 +16,16 @@ insert into customer_history
 (name,dob,district_id)
 values(@name,@dob,@district_id);
 
+Example 2:
+CREATE TRIGGER AfterOrderInsert
+ON proposals
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO proposals_history (proposals_id, cas_cif_id, created_at)
+    SELECT id, cas_cif_id, created_at
+    FROM inserted;
+END;
 ////////////////==========When update data->Create Trigger==============//////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 CREATE TRIGGER insertWhenUpdateCustomer
